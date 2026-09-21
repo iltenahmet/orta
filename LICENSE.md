@@ -161,7 +161,7 @@ earn revenue, on non-commercial education or research, or on internal use.
 Once a Product's lifetime Gross Revenue exceeds USD 200,000, you will report
 that Product's Gross Revenue to us in writing within forty-five (45) days after
 the end of each calendar quarter, and pay the royalty due for that quarter at
-the same time. Report to: [contact address]. We will provide payment
+the same time. Report to: iltenahmet@gmail.com. We will provide payment
 instructions on request. We may, no more than once per year and at our own
 expense, ask an independent accountant to verify your reports.
 
