@@ -1179,6 +1179,11 @@ void GameView::_notification(int p_what) {
 					} break;
 				}
 				embed_size_mode = (EmbedSizeMode)(int)EditorSettings::get_singleton()->get_project_metadata("game_view", "embed_size_mode", SIZE_MODE_FIXED);
+				if (bool(ProjectSettings::get_singleton()->get_setting("application/config/orta_workspace", false))) {
+					embed_on_play = true;
+					make_floating_on_play = false;
+					embed_size_mode = SIZE_MODE_STRETCH;
+				}
 				_update_embed_menu_options();
 
 				EditorRunBar::get_singleton()->connect("play_pressed", callable_mp(this, &GameView::_play_pressed));
@@ -1442,6 +1447,9 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	MarginContainer *toolbar_margin = memnew(MarginContainer);
 	toolbar_margin->set_theme_type_variation("MainToolBarMargin");
 	add_child(toolbar_margin);
+	if (bool(ProjectSettings::get_singleton()->get_setting("application/config/orta_workspace", false))) {
+		toolbar_margin->hide();
+	}
 
 	// FIXME: Turn this back into a FlowContainer once GH-115523 is fixed.
 	HBoxContainer *main_menu_fc = memnew(HBoxContainer);

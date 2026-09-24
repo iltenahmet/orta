@@ -1105,6 +1105,28 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 
 	List<String>::Element *I = args.front();
 
+#if defined(TOOLS_ENABLED) && defined(MACOS_ENABLED)
+	// Finder launch opens a persistent workspace. Explicit CLI arguments keep normal tooling.
+	if (args.is_empty()) {
+		String starter = OS::get_singleton()->get_bundle_resource_dir().path_join("orta-starter");
+		if (FileAccess::exists(starter.path_join("project.godot"))) {
+			String workspace = OS::get_singleton()->get_data_path().path_join("Orta/Workspace");
+			if (!FileAccess::exists(workspace.path_join("project.godot"))) {
+				Ref<DirAccess> dir = DirAccess::create(DirAccess::ACCESS_FILESYSTEM);
+				Error err = dir->copy_dir(starter, workspace);
+				if (err != OK) {
+					OS::get_singleton()->alert("Orta could not create your workspace.");
+					return err;
+				}
+			}
+			args.push_back("--editor");
+			args.push_back("--path");
+			args.push_back(workspace);
+			I = args.front();
+		}
+	}
+#endif
+
 	while (I) {
 		I->get() = unescape_cmdline(I->get().strip_edges());
 		I = I->next();
