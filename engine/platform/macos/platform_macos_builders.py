@@ -55,6 +55,12 @@ def generate_bundle(target, source, env):
                         line = line.replace("org.godotengine.godot", "org.godotengine.godot." + version["build"])
                     fout.write(line)
 
+        # Bundle the first workspace. Startup copies it to writable user data.
+        starter = env.Dir("#misc/orta-starter").abspath
+        if os.path.isdir(starter):
+            shutil.copytree(starter, app_dir + "/Contents/Resources/orta-starter",
+                            ignore=shutil.ignore_patterns(".godot"))
+
         # Sign .app bundle.
         if env["bundle_sign_identity"] != "":
             sign_command = [

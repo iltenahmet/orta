@@ -29,6 +29,7 @@
 /**************************************************************************/
 
 #include "editor_main_screen.h"
+#include "core/config/project_settings.h"
 
 #include "core/io/config_file.h"
 #include "core/object/callable_mp.h"
@@ -168,6 +169,9 @@ void EditorMainScreen::select_by_name(const String &p_name) {
 }
 
 void EditorMainScreen::select(int p_index) {
+	if (bool(ProjectSettings::get_singleton()->get_setting("application/config/orta_workspace", false)) && p_index != EDITOR_GAME) {
+		return;
+	}
 	if (EditorNode::get_singleton()->is_changing_scene()) {
 		return;
 	}

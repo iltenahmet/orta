@@ -1,0 +1,18 @@
+config_version=5
+
+[application]
+config/name="Untitled world"
+config/orta_workspace=true
+run/main_scene="res://world.tscn"
+boot_splash/show_image=false
+boot_splash/bg_color=Color(0.086, 0.094, 0.09, 1)
+
+[display]
+window/size/viewport_width=1000
+window/size/viewport_height=800
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.086, 0.094, 0.09, 1)

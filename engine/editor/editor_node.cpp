@@ -69,6 +69,7 @@
 #include "editor/editor_interface.h"
 #include "editor/editor_log.h"
 #include "editor/editor_main_screen.h"
+#include "editor/orta_workspace.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/export/dedicated_server_export_plugin.h"
@@ -366,6 +367,10 @@ void EditorNode::_version_control_menu_option(int p_idx) {
 }
 
 void EditorNode::_update_title() {
+	if (bool(ProjectSettings::get_singleton()->get_setting("application/config/orta_workspace", false))) {
+		DisplayServer::get_singleton()->window_set_title("Orta");
+		return;
+	}
 	const String appname = GLOBAL_GET("application/config/name");
 	String title = (appname.is_empty() ? TTR("Unnamed Project") : appname);
 	const String edited = editor_data.get_edited_scene_root() ? editor_data.get_edited_scene_root()->get_scene_file_path() : String();
@@ -408,6 +413,9 @@ void EditorNode::input(const Ref<InputEvent> &p_event) {
 
 void EditorNode::shortcut_input(const Ref<InputEvent> &p_event) {
 	ERR_FAIL_COND(p_event.is_null());
+	if (bool(ProjectSettings::get_singleton()->get_setting("application/config/orta_workspace", false))) {
+		return;
+	}
 
 	Ref<InputEventKey> k = p_event;
 	if ((k.is_valid() && k->is_pressed() && !k->is_echo()) || Object::cast_to<InputEventShortcut>(*p_event)) {
@@ -8189,6 +8197,9 @@ void EditorNode::_update_main_menu_type() {
 	bool can_expand = bool(EDITOR_GET("interface/editor/appearance/expand_to_title")) && DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_EXTEND_TO_TITLE);
 	bool use_menu_button = EDITOR_GET("interface/editor/appearance/collapse_main_menu");
 	bool global_menu = !bool(EDITOR_GET("interface/editor/appearance/use_embedded_menu")) && NativeMenu::get_singleton()->has_feature(NativeMenu::FEATURE_GLOBAL_MENU);
+	if (bool(ProjectSettings::get_singleton()->get_setting("application/config/orta_workspace", false))) {
+		global_menu = false;
+	}
 	MenuType new_menu_type;
 	if (global_menu) {
 		new_menu_type = MENU_TYPE_GLOBAL;
@@ -9628,6 +9639,16 @@ EditorNode::EditorNode() {
 
 	follow_system_theme = EDITOR_GET("interface/theme/follow_system_theme");
 	use_system_accent_color = EDITOR_GET("interface/theme/use_system_accent_color");
+	if (!cmdline_mode && bool(ProjectSettings::get_singleton()->get_setting("application/config/orta_workspace", false))) {
+		main_vbox->hide();
+		gui_base->add_child(memnew(OrtaWorkspace(editor_main_screen)));
+		if (OS::get_singleton()->get_environment("ORTA_CAPTURE") == "1") {
+			EditorSettings::get_singleton()->set("interface/editor/behavior/automatically_open_screenshots", false);
+			screenshot_timer->set_wait_time(5.0);
+			screenshot_timer->set_autostart(true);
+		}
+		DisplayServer::get_singleton()->window_set_flag(DisplayServerEnums::WINDOW_FLAG_EXTEND_TO_TITLE, false);
+	}
 }
 
 EditorNode::~EditorNode() {
